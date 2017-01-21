@@ -11,22 +11,27 @@
               {:title "Tell my friends about Lambda Island"}]}
      {:title "Doing"
       :cards [{:title "Following the Reagent tutorial"}
-              {:title "Using Evil mode badly"}]}]}))
+              {:title "Using Evil mode badly"
+               :editing true}]
+      :editing true}]}))
 
 ;; (defn greeting []
 ;;   [:h1 (:text @app-state)])
 
 (defn Card [card]
-  [:div.card
-   (:title card)])
+  (if (:editing card)
+    [:div.card.editing [:input {:type "text" :value (:title card)}]]
+    [:div.card (:title card)]))
 
 (defn NewCard []
   [:div.new-card
    "+ add new card"])
 
-(defn Column [{:keys [title cards]}]
+(defn Column [{:keys [title cards editing]}]
   [:div.column
-   [:h2 title]
+   (if editing
+     [:input {:type "text" :value title}]
+     [:h2 title])
    (for [c cards]
      [Card c])
    [NewCard]])
