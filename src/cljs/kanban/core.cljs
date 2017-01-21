@@ -3,7 +3,7 @@
 
 (enable-console-print!)
 
-(def app-state
+(def board
   (reagent/atom
    {:columns
     [{:title "Todos"
@@ -15,38 +15,44 @@
                :editing true}]
       :editing true}]}))
 
-;; (defn greeting []
-;;   [:h1 (:text @app-state)])
-
-(defn Card [card]
-  (if (:editing card)
-    [:div.card.editing [:input {:type "text" :value (:title card)}]]
-    [:div.card (:title card)]))
+(defn Card [card-cursor]
+  (let [{:keys [editing title]} @card-cursor]
+    (if editing
+      [:div.card.editing [:input {:type "text" :value title}]]
+      [:div.card title])))
 
 (defn NewCard []
   [:div.new-card
    "+ add new card"])
 
-(defn Column [{:keys [title cards editing]}]
-  [:div.column
-   (if editing
-     [:input {:type "text" :value title}]
-     [:h2 title])
-   (for [c cards]
-     [Card c])
-   [NewCard]])
+(defn Column [column-cursor]
+  (let [{:keys [title cards editing]} @column-cursor]
+    [:div.column
+     (if editing
+       [:input {:type "text" :value title}]
+       [:h2 title])
+     (for [i (range (count cards))]
+       [Card (reagent/cursor column-cursor [:cards i])])
+     [NewCard]]))
 
 (defn NewColumn []
   [:div.new-column
    "+ add new column"])
 
-(defn Board [state]
+(defn Board [board]
   [:div.board
-   (for [c (:columns @state)]
-     [Column c])
+   (for [i (range (count (:columns @board)))]
+     [Column (reagent/cursor board [:columns i])])
    [NewColumn]])
 
-(reagent/render [Board app-state] (js/document.getElementById "app"))
+;; (def cards-cursor
+;;   (reagent/cursor board [:columns 0 :cards]))
+
+;; @cards-cursor
+
+;; (swap! cards-cursor conj {:title "New card in column 0"})
+
+(reagent/render [Board board] (js/document.getElementById "app"))
 
 ;; Original render line
 ;; (reagent/render [greeting] (js/document.getElementById "app"))
