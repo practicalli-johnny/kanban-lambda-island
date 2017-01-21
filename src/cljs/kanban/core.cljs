@@ -8,4 +8,20 @@
 (defn greeting []
   [:h1 (:text @app-state)])
 
-(reagent/render [greeting] (js/document.getElementById "app"))
+(defn Card []
+  [:div.card
+   "a card"])
+
+(defn Column []
+  [:div.column
+   [:h2 "a column"]])
+
+(defn Board []
+  [:div.board
+   [Column]
+   [Column]])
+
+(reagent/render [Board] (js/document.getElementById "app"))
+
+;; Original render line
+;; (reagent/render [greeting] (js/document.getElementById "app"))
