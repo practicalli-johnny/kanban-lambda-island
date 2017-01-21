@@ -18,8 +18,12 @@
 (defn Card [card-cursor]
   (let [{:keys [editing title]} @card-cursor]
     (if editing
-      [:div.card.editing [:input {:type "text" :value title}]]
-      [:div.card title])))
+      [:div.card.editing
+       [:input {:type "text"
+                :value title
+                :on-change #(swap! card-cursor assoc :title (.. % -target -value))
+                :on-blur #(swap! card-cursor dissoc :editing)}]]
+      [:div.card {:on-click #(swap! card-cursor assoc :editing true)} title])))
 
 (defn NewCard []
   [:div.new-card
