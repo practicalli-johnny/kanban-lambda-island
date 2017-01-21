@@ -1,9 +1,9 @@
 (ns kanban.core
-  (:require [reagent.core :as reagent :refer [atom]]))
+  (:require [reagent.core :as reagent]))
 
 (enable-console-print!)
 
-(defonce app-state (atom {:text "Hello Chestnut!"}))
+(defonce app-state (reagent/atom {:text "Hello Chestnut!"}))
 
 (defn greeting []
   [:h1 (:text @app-state)])
