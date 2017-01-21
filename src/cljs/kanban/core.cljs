@@ -3,38 +3,45 @@
 
 (enable-console-print!)
 
-(defonce app-state (reagent/atom {:text "Hello Chestnut!"}))
+(def app-state
+  (reagent/atom
+   {:columns
+    [{:title "Todos"
+      :cards [{:title "Learn about Reagent"}
+              {:title "Tell my friends about Lambda Island"}]}
+     {:title "Doing"
+      :cards [{:title "Following the Reagent tutorial"}
+              {:title "Using Evil mode badly"}]}]}))
 
-(defn greeting []
-  [:h1 (:text @app-state)])
+;; (defn greeting []
+;;   [:h1 (:text @app-state)])
 
-(defn Card []
+(defn Card [card]
   [:div.card
-   "a card"])
+   (:title card)])
 
 (defn NewCard []
   [:div.new-card
    "+ add new card"])
 
-(defn Column []
+(defn Column [{:keys [title cards]}]
   [:div.column
-   [:h2 "a column"]
-   [Card]
-   [Card]
-   [Card]
+   [:h2 title]
+   (for [c cards]
+     [Card c])
    [NewCard]])
 
 (defn NewColumn []
   [:div.new-column
    "+ add new column"])
 
-(defn Board []
+(defn Board [state]
   [:div.board
-   [Column]
-   [Column]
+   (for [c (:columns @state)]
+     [Column c])
    [NewColumn]])
 
-(reagent/render [Board] (js/document.getElementById "app"))
+(reagent/render [Board app-state] (js/document.getElementById "app"))
 
 ;; Original render line
 ;; (reagent/render [greeting] (js/document.getElementById "app"))
