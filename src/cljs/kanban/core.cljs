@@ -15,15 +15,24 @@
                :editing true}]
       :editing true}]}))
 
-(defn Card [card-cursor]
+(defn- update-title [card-cursor title]
+  (swap! card-cursor assoc :title title))
+
+(defn- stop-editing [card-cursor]
+  (swap! card-cursor dissoc :editing))
+
+(defn- start-editing [card-cursor]
+  (swap! card-cursor assoc :editing true))
+
+(defn- Card [card-cursor]
   (let [{:keys [editing title]} @card-cursor]
     (if editing
-      [:div.card.editing
-       [:input {:type "text"
-                :value title
-                :on-change #(swap! card-cursor assoc :title (.. % -target -value))
-                :on-blur #(swap! card-cursor dissoc :editing)}]]
-      [:div.card {:on-click #(swap! card-cursor assoc :editing true)} title])))
+      [:div.card.editing [:input {:type "text"
+                                  :value title
+                                  :on-change #(update-title card-cursor (.. % -target -value))
+                                  :on-blur #(stop-editing card-cursor)}]]
+      [:div.card {:on-click #(start-editing card-cursor)} title])))
+
 
 (defn NewCard []
   [:div.new-card
