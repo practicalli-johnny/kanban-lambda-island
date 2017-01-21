@@ -29,8 +29,11 @@
     (if editing
       [:div.card.editing [:input {:type "text"
                                   :value title
+                                  :autoFocus true
                                   :on-change #(update-title card-cursor (.. % -target -value))
-                                  :on-blur #(stop-editing card-cursor)}]]
+                                  :on-blur #(stop-editing card-cursor)
+                                  :on-key-press #(if (= (.-charCode %) 13)
+                                                   (stop-editing card-cursor))}]]
       [:div.card {:on-click #(start-editing card-cursor)} title])))
 
 
