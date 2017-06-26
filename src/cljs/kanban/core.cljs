@@ -1,8 +1,18 @@
 (ns kanban.core
   (:require [reagent.core :as reagent]))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; App located at:
+;; http://localhost:3451/index.html
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Debugging in the browser
 (enable-console-print!)
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Model / State
 (def board
   (reagent/atom
    {:columns
@@ -13,7 +23,11 @@
       :cards [{:title "Following the Reagent tutorial"}
               {:title "Using Evil mode badly"
                :editing true}]
-      :editing true}]}))
+      }]}))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Actions
 
 (defn- update-title [card-cursor title]
   (swap! card-cursor assoc :title title))
@@ -24,19 +38,24 @@
 (defn- start-editing [card-cursor]
   (swap! card-cursor assoc :editing true))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Components
+
 (defn- Card [card-cursor]
   (let [{:keys [editing title]} @card-cursor]
     (if editing
-      [:div.card.editing [:input {:type "text"
-                                  :value title
-                                  :autoFocus true
-                                  :on-change #(update-title card-cursor (.. % -target -value))
-                                  :on-blur #(stop-editing card-cursor)
-                                  :on-key-press #(if (= (.-charCode %) 13)
-                                                   (stop-editing card-cursor))}]]
+      [:div.card.editing
+       [:input {:type "text"
+                :value title
+                :autoFocus true
+                :on-change #(update-title card-cursor (.. % -target -value))
+                :on-blur #(stop-editing card-cursor)
+                :on-key-press #(if (= (.-charCode %) 13)
+                                 (stop-editing card-cursor))}]]
       [:div.card {:on-click #(start-editing card-cursor)} title])))
 
-
+;; pull request welcome to make this a button :)
 (defn NewCard []
   [:div.new-card
    "+ add new card"])
@@ -61,12 +80,12 @@
      [Column (reagent/cursor board [:columns i])])
    [NewColumn]])
 
-;; (def cards-cursor
-;;   (reagent/cursor board [:columns 0 :cards]))
+(def cards-cursor
+  (reagent/cursor board [:columns 0 :cards]))
 
-;; @cards-cursor
+@cards-cursor
 
-;; (swap! cards-cursor conj {:title "New card in column 0"})
+(swap! cards-cursor conj {:title "New card in column 0"})
 
 (reagent/render [Board board] (js/document.getElementById "app"))
 
